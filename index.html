@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exim Bank Social Dashboard</title>
+  <meta name="description" content="Exim Bank social media intelligence dashboard (demo, illustrative data).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23002B5C'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='700' font-size='14' fill='%23F5A623' text-anchor='middle'%3EEB%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <!-- Placeholder wordmark: swap for the official Exim Bank logo file (assets/logo.svg) -->
+        <div class="logo" aria-label="Exim Bank">
+          <span class="logo-mark">EB</span>
+          <span class="logo-word">EXIM <b>BANK</b></span>
+        </div>
+        <div class="brand-divider"></div>
+        <div>
+          <h1>Social Media Dashboard</h1>
+          <p class="subtitle" id="period-label">Loading…</p>
+        </div>
+      </div>
+      <div class="topbar-actions no-print">
+        <span class="updated">Last updated <strong id="last-updated">—</strong></span>
+        <button class="btn btn-gold" id="refresh-btn" type="button">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+    <div class="gold-bar"></div>
+  </header>
+
+  <main class="container" id="dashboard">
+    <div class="demo-banner no-print">Demo build. All figures are illustrative dummy data based on public benchmarks, not Exim Bank account data.</div>
+
+    <!-- KPI cards -->
+    <section class="kpi-row" id="kpi-row" aria-label="Key metrics"></section>
+
+    <!-- Channel mix + engagement trend -->
+    <section class="grid grid-1-2">
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Channel mix</h2>
+            <p class="card-sub">Share of impressions by platform</p>
+          </div>
+        </header>
+        <div class="chart-box chart-doughnut"><canvas id="channel-mix"></canvas></div>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Engagement trend</h2>
+            <p class="card-sub" id="trend-sub">Daily engagements, last 30 days</p>
+          </div>
+          <div class="segmented no-print" role="group" aria-label="Trend granularity">
+            <button type="button" data-gran="daily" class="active">Daily</button>
+            <button type="button" data-gran="weekly">Weekly</button>
+            <button type="button" data-gran="monthly">Monthly</button>
+          </div>
+        </header>
+        <div class="chart-box chart-line"><canvas id="engagement-trend"></canvas></div>
+      </article>
+    </section>
+
+    <!-- Benchmark -->
+    <section class="card">
+      <header class="card-head">
+        <div>
+          <h2>Benchmark vs actual</h2>
+          <p class="card-sub">Exim Bank against industry benchmarks. Indexed so benchmark = 100.</p>
+        </div>
+        <div class="legend-inline">
+          <span><i class="dot dot-blue"></i>Exim Bank</span>
+          <span><i class="dot dot-grey"></i>Benchmark</span>
+        </div>
+      </header>
+      <div class="grid grid-2-1 inner">
+        <div class="chart-box chart-bar"><canvas id="benchmark-chart"></canvas></div>
+        <ul class="bench-list" id="bench-list"></ul>
+      </div>
+    </section>
+
+    <!-- Sentiment + top posts -->
+    <section class="grid grid-1-2">
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Audience sentiment</h2>
+            <p class="card-sub" id="sentiment-sub">Across comments and mentions</p>
+          </div>
+        </header>
+        <div class="gauge-wrap">
+          <div class="chart-box chart-gauge"><canvas id="sentiment-gauge"></canvas></div>
+          <div class="gauge-center" id="gauge-center"></div>
+        </div>
+        <ul class="sentiment-legend" id="sentiment-legend"></ul>
+        <h3 class="mini-title">What people talk about</h3>
+        <ul class="themes" id="themes"></ul>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Top posts</h2>
+            <p class="card-sub">Ranked by engagement rate. Click a post for details.</p>
+          </div>
+        </header>
+        <div class="post-grid" id="post-grid"></div>
+      </article>
+    </section>
+
+    <!-- Channel deep-dive -->
+    <section class="grid grid-2">
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>WhatsApp funnel</h2>
+            <p class="card-sub">Broadcast messages this period</p>
+          </div>
+        </header>
+        <div class="chart-box chart-small"><canvas id="whatsapp-funnel"></canvas></div>
+      </article>
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Website traffic sources</h2>
+            <p class="card-sub" id="web-sub">Sessions by source</p>
+          </div>
+        </header>
+        <div class="chart-box chart-small"><canvas id="web-sources"></canvas></div>
+      </article>
+    </section>
+
+    <!-- Tables -->
+    <section class="card">
+      <header class="card-head">
+        <div>
+          <h2>Channel performance</h2>
+          <p class="card-sub">All owned social channels this period</p>
+        </div>
+        <button class="btn btn-outline no-print" type="button" data-csv="channel-table">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>CSV
+        </button>
+      </header>
+      <div class="table-wrap"><table id="channel-table" class="data-table"></table></div>
+    </section>
+
+    <section class="card">
+      <header class="card-head">
+        <div>
+          <h2>Competitor snapshot</h2>
+          <p class="card-sub">Tanzanian banking sector, combined social channels (anonymised)</p>
+        </div>
+        <button class="btn btn-outline no-print" type="button" data-csv="competitor-table">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>CSV
+        </button>
+      </header>
+      <div class="table-wrap"><table id="competitor-table" class="data-table"></table></div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="section-block">
+      <h2 class="section-title">Strategy recommendations</h2>
+      <div class="rec-grid" id="rec-grid"></div>
+    </section>
+
+    <!-- Export -->
+    <section class="export-bar no-print">
+      <div>
+        <h2>Export this report</h2>
+        <p>Download the tables as CSV, or save the full dashboard as PDF.</p>
+      </div>
+      <div class="export-actions">
+        <button class="btn btn-outline-light" type="button" id="export-csv">Download CSV</button>
+        <button class="btn btn-outline-light" type="button" id="export-pdf">Save as PDF</button>
+        <button class="btn btn-gold" type="button" id="export-print">Print</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>Kwa maelezo zaidi Piga 0800 780 111</span>
+      <span>www.eximbank.co.tz</span>
+    </div>
+  </footer>
+
+  <!-- Post modal -->
+  <div class="modal" id="post-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" type="button" aria-label="Close" data-close>&times;</button>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
