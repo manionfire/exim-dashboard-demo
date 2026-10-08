@@ -1,23 +1,31 @@
 # Exim Bank Social Media Intelligence Dashboard (Demo)
 
-Static HTML/CSS/JS dashboard that pulls together Meta (Facebook/Instagram), TikTok, YouTube, LinkedIn, WhatsApp and website metrics for Exim Bank. It runs on dummy data from `data.json`; nothing connects to a live API.
+Static HTML/CSS/JS dashboard for Exim Bank covering Facebook, Instagram, YouTube, TikTok, WhatsApp and the website for Q3 2026 (1 Jul – 30 Sep). Data comes from `data.json`; nothing connects to a live API.
 
-> All figures are illustrative and based on public benchmarks, not Exim Bank account data. The logo in the header is a placeholder wordmark. Swap in the official logo file before sharing externally.
+> **Data provenance.** The dashboard mixes two kinds of figures and labels each card:
+> - **Public data**: profile counters, a sample of public posts, Emplifi Q2 2026 bank benchmarks, Instagram peer counts and TCRA market context, each with its date and source.
+> - **Simulated**: the PRD example figures in `demoFallbacks` (impressions, engagement, growth, sessions, sentiment, WhatsApp). These are not measured Exim results.
+>
+> The **Simulated figures** switch in the header hides every simulated value. Open the page with `?view=public` to start in public-only mode (useful for stakeholder links). `null` in the data means "not available", never zero.
+>
+> The header logo is a placeholder wordmark. Swap in the official logo before sharing externally.
 
 ## What's in it
 
-| Section | Details |
+| Section | Source |
 |---|---|
-| KPI cards | Impressions, engagement, net follower growth, website sessions. Each shows % change vs prior period and a sparkline |
-| Channel mix | Doughnut of impressions by platform |
-| Engagement trend | TikTok / Instagram / Facebook / YouTube, toggle daily (30 d), weekly (12 wk), monthly (6 mo) |
-| Benchmark vs actual | Indexed bar chart (benchmark = 100) with green/red indicators |
-| Sentiment | Semi-circle gauge, net sentiment score, top conversation themes |
-| Top posts | 6-post grid ranked by engagement rate, click for a detail modal |
-| WhatsApp funnel / web sources | Sent → delivered → read → replied, sessions by source |
-| Tables | Channel performance and anonymised competitor snapshot, each with CSV export |
-| Recommendations | 4 prioritised strategy cards |
-| Export | Full-report CSV, Save as PDF, Print (A4 print stylesheet hides controls) |
+| Public profile snapshot (FB, IG, YouTube, TikTok) | Public |
+| Q3 KPI cards with Sep-vs-Aug change and sparklines | Simulated |
+| Audience by platform (doughnut) | Public |
+| Monthly trend: engagement rate by channel, impressions, engagement, sessions | Simulated |
+| Benchmark vs Exim | Public benchmark, simulated Exim rate |
+| Instagram followers vs CRDB and NMB | Public |
+| Sentiment gauge, WhatsApp and website stats | Simulated (empty state when hidden) |
+| Q3 public post sample (12 posts, popup with link to the original) | Public |
+| Visible interactions per post, TCRA platform data usage | Public |
+| Channel overview table (public and simulated in separate columns) | Mixed, CSV export |
+| Recommendations, sources and data-quality notes | From `data.json` |
+| Export | Full-report CSV, Save as PDF, Print (A4) |
 
 ## Files
 
@@ -40,12 +48,14 @@ Then open http://localhost:8000.
 
 ## Updating the data
 
-Edit `data.json` and click **Refresh** in the dashboard (it re-fetches without cache). Key shapes:
+Edit `data.json` and click **Refresh** (it re-fetches without cache). Key parts:
 
-- `summary.<kpi>` → `{ value, previous, spark[12] }`
-- `channels.<platform>` → followers, growth, impressions, engagements, engagementRate (0–1)
-- `trend` → `dates[]` plus one daily array per channel (182 days)
-- `benchmarks[]`, `competitors[]`, `sentiment`, `topPosts[]`, `recommendations[]`
+- `channels.<platform>`: real values; `null` where not public. When an authorised analytics export fills these in, the dashboard uses them instead of the simulated fallback.
+- `summary`, `sentiment`: real values, currently `null`.
+- `publicObservations`: public posts, TikTok posts, competitor snapshots, TCRA market context.
+- `benchmarks`: Emplifi bank medians with period and definition.
+- `demoFallbacks`: simulated PRD figures (`enabled: false` removes them from the page entirely).
+- `recommendations`, `sources`, `dataQualityNotes`: rendered as-is.
 
 ## Deploy: GitHub
 

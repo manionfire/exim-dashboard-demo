@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exim Bank Social Dashboard</title>
-  <meta name="description" content="Exim Bank social media intelligence dashboard (demo, illustrative data).">
+  <meta name="description" content="Exim Bank social media intelligence dashboard prototype: public observations plus clearly labelled simulated figures.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
@@ -27,7 +27,12 @@
         </div>
       </div>
       <div class="topbar-actions no-print">
-        <span class="updated">Last updated <strong id="last-updated">—</strong></span>
+        <label class="switch" title="Show or hide the PRD example figures">
+          <input type="checkbox" id="sim-toggle" checked>
+          <span class="switch-track"><span class="switch-thumb"></span></span>
+          <span class="switch-label">Simulated figures</span>
+        </label>
+        <span class="updated">Updated <strong id="last-updated">—</strong></span>
         <button class="btn btn-gold" id="refresh-btn" type="button">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
           Refresh
@@ -38,105 +43,162 @@
   </header>
 
   <main class="container" id="dashboard">
-    <div class="demo-banner no-print">Demo build. All figures are illustrative dummy data based on public benchmarks, not Exim Bank account data.</div>
+    <div class="data-notice" id="data-notice">
+      <strong id="notice-banner"></strong>
+      <p id="notice-text"></p>
+      <div class="notice-legend">
+        <span class="tag tag-real">Public data</span> observed from public pages and reports
+        <span class="tag tag-sim">Simulated</span> <span id="sim-label"></span>
+      </div>
+    </div>
 
-    <!-- KPI cards -->
-    <section class="kpi-row" id="kpi-row" aria-label="Key metrics"></section>
+    <!-- Public profile snapshot (real) -->
+    <section class="section-block">
+      <div class="section-head">
+        <h2 class="section-title">Public profile snapshot</h2>
+        <span class="tag tag-real">Public data</span>
+      </div>
+      <div class="kpi-row" id="public-kpis"></div>
+    </section>
 
-    <!-- Channel mix + engagement trend -->
+    <!-- Q3 performance (simulated) -->
+    <section class="section-block" id="sim-kpi-section">
+      <div class="section-head">
+        <h2 class="section-title">Q3 performance</h2>
+        <span class="tag tag-sim">Simulated</span>
+      </div>
+      <div class="kpi-row" id="sim-kpis"></div>
+    </section>
+
+    <!-- Audience + trend -->
     <section class="grid grid-1-2">
       <article class="card">
         <header class="card-head">
           <div>
-            <h2>Channel mix</h2>
-            <p class="card-sub">Share of impressions by platform</p>
+            <h2>Audience by platform</h2>
+            <p class="card-sub" id="mix-sub">Public follower counters</p>
           </div>
+          <span class="tag tag-real">Public data</span>
         </header>
         <div class="chart-box chart-doughnut"><canvas id="channel-mix"></canvas></div>
+        <p class="footnote" id="mix-note"></p>
       </article>
 
       <article class="card">
         <header class="card-head">
           <div>
-            <h2>Engagement trend</h2>
-            <p class="card-sub" id="trend-sub">Daily engagements, last 30 days</p>
+            <h2>Monthly trend</h2>
+            <p class="card-sub" id="trend-sub">July to September 2026</p>
           </div>
-          <div class="segmented no-print" role="group" aria-label="Trend granularity">
-            <button type="button" data-gran="daily" class="active">Daily</button>
-            <button type="button" data-gran="weekly">Weekly</button>
-            <button type="button" data-gran="monthly">Monthly</button>
+          <div class="head-right">
+            <div class="segmented no-print" role="group" aria-label="Trend metric">
+              <button type="button" data-metric="rates" class="active">Engagement rate</button>
+              <button type="button" data-metric="totalImpressions">Impressions</button>
+              <button type="button" data-metric="totalEngagement">Engagement</button>
+              <button type="button" data-metric="websiteSessions">Sessions</button>
+            </div>
+            <span class="tag tag-sim">Simulated</span>
           </div>
         </header>
-        <div class="chart-box chart-line"><canvas id="engagement-trend"></canvas></div>
+        <div class="chart-box chart-line" id="trend-box"><canvas id="engagement-trend"></canvas></div>
       </article>
     </section>
 
-    <!-- Benchmark -->
-    <section class="card">
-      <header class="card-head">
-        <div>
-          <h2>Benchmark vs actual</h2>
-          <p class="card-sub">Exim Bank against industry benchmarks. Indexed so benchmark = 100.</p>
-        </div>
-        <div class="legend-inline">
-          <span><i class="dot dot-blue"></i>Exim Bank</span>
-          <span><i class="dot dot-grey"></i>Benchmark</span>
-        </div>
-      </header>
-      <div class="grid grid-2-1 inner">
-        <div class="chart-box chart-bar"><canvas id="benchmark-chart"></canvas></div>
-        <ul class="bench-list" id="bench-list"></ul>
-      </div>
-    </section>
-
-    <!-- Sentiment + top posts -->
-    <section class="grid grid-1-2">
-      <article class="card">
-        <header class="card-head">
-          <div>
-            <h2>Audience sentiment</h2>
-            <p class="card-sub" id="sentiment-sub">Across comments and mentions</p>
-          </div>
-        </header>
-        <div class="gauge-wrap">
-          <div class="chart-box chart-gauge"><canvas id="sentiment-gauge"></canvas></div>
-          <div class="gauge-center" id="gauge-center"></div>
-        </div>
-        <ul class="sentiment-legend" id="sentiment-legend"></ul>
-        <h3 class="mini-title">What people talk about</h3>
-        <ul class="themes" id="themes"></ul>
-      </article>
-
-      <article class="card">
-        <header class="card-head">
-          <div>
-            <h2>Top posts</h2>
-            <p class="card-sub">Ranked by engagement rate. Click a post for details.</p>
-          </div>
-        </header>
-        <div class="post-grid" id="post-grid"></div>
-      </article>
-    </section>
-
-    <!-- Channel deep-dive -->
+    <!-- Benchmarks + peers -->
     <section class="grid grid-2">
       <article class="card">
         <header class="card-head">
           <div>
-            <h2>WhatsApp funnel</h2>
-            <p class="card-sub">Broadcast messages this period</p>
+            <h2>Benchmark vs Exim</h2>
+            <p class="card-sub" id="bench-sub">Median post engagement rate, bank sector</p>
           </div>
+          <span class="tag tag-mixed">Real benchmark · simulated Exim</span>
         </header>
-        <div class="chart-box chart-small"><canvas id="whatsapp-funnel"></canvas></div>
+        <div class="chart-box chart-small"><canvas id="benchmark-chart"></canvas></div>
+        <ul class="bench-list" id="bench-list"></ul>
       </article>
+
       <article class="card">
         <header class="card-head">
           <div>
-            <h2>Website traffic sources</h2>
-            <p class="card-sub" id="web-sub">Sessions by source</p>
+            <h2>Instagram followers vs peers</h2>
+            <p class="card-sub" id="peer-sub">Tanzanian banks, public profile counters</p>
           </div>
+          <span class="tag tag-real">Public data</span>
         </header>
-        <div class="chart-box chart-small"><canvas id="web-sources"></canvas></div>
+        <div class="chart-box chart-small"><canvas id="peer-chart"></canvas></div>
+        <p class="footnote" id="peer-note"></p>
+      </article>
+    </section>
+
+    <!-- Sentiment + WhatsApp/web -->
+    <section class="grid grid-2">
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Audience sentiment</h2>
+            <p class="card-sub">Share of comments and mentions</p>
+          </div>
+          <span class="tag tag-sim">Simulated</span>
+        </header>
+        <div class="gauge-wrap" id="gauge-box">
+          <div class="chart-box chart-gauge"><canvas id="sentiment-gauge"></canvas></div>
+          <div class="gauge-center" id="gauge-center"></div>
+        </div>
+        <ul class="sentiment-legend" id="sentiment-legend"></ul>
+        <p class="footnote" id="sentiment-note"></p>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>WhatsApp &amp; website</h2>
+            <p class="card-sub">Q3 messaging and site analytics</p>
+          </div>
+          <span class="tag tag-sim">Simulated</span>
+        </header>
+        <div class="stat-grid" id="owned-stats"></div>
+        <p class="footnote" id="owned-note"></p>
+      </article>
+    </section>
+
+    <!-- Public posts -->
+    <section class="card">
+      <header class="card-head">
+        <div>
+          <h2>Q3 public post sample</h2>
+          <p class="card-sub">Newest first. Counters as displayed on each post when checked. Click a post for details and the original link.</p>
+        </div>
+        <span class="tag tag-real">Public data</span>
+      </header>
+      <div class="post-grid" id="post-grid"></div>
+      <div class="more-row no-print"><button type="button" class="btn btn-outline" id="posts-more"></button></div>
+    </section>
+
+    <section class="grid grid-2">
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Visible interactions per post</h2>
+            <p class="card-sub">Instagram likes + comments, Facebook reactions + shares</p>
+          </div>
+          <span class="tag tag-real">Public data</span>
+        </header>
+        <div class="chart-box chart-posts"><canvas id="post-chart"></canvas></div>
+        <p class="footnote" id="post-chart-note"></p>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Tanzania market context</h2>
+            <p class="card-sub" id="tcra-sub">Platform data usage</p>
+          </div>
+          <span class="tag tag-real">Public data</span>
+        </header>
+        <div class="context-stats" id="tcra-stats"></div>
+        <div class="chart-box chart-small"><canvas id="tcra-chart"></canvas></div>
+        <p class="footnote" id="tcra-note"></p>
       </article>
     </section>
 
@@ -144,8 +206,8 @@
     <section class="card">
       <header class="card-head">
         <div>
-          <h2>Channel performance</h2>
-          <p class="card-sub">All owned social channels this period</p>
+          <h2>Channel overview</h2>
+          <p class="card-sub">Public counters next to the simulated PRD figures, kept in separate columns</p>
         </div>
         <button class="btn btn-outline no-print" type="button" data-csv="channel-table">
           <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>CSV
@@ -154,30 +216,32 @@
       <div class="table-wrap"><table id="channel-table" class="data-table"></table></div>
     </section>
 
+    <!-- Recommendations -->
+    <section class="section-block">
+      <h2 class="section-title">Recommendations</h2>
+      <div class="rec-grid" id="rec-grid"></div>
+    </section>
+
+    <!-- Sources -->
     <section class="card">
       <header class="card-head">
         <div>
-          <h2>Competitor snapshot</h2>
-          <p class="card-sub">Tanzanian banking sector, combined social channels (anonymised)</p>
+          <h2>Sources &amp; data quality</h2>
+          <p class="card-sub" id="sources-sub"></p>
         </div>
-        <button class="btn btn-outline no-print" type="button" data-csv="competitor-table">
+        <button class="btn btn-outline no-print" type="button" data-csv="sources-table">
           <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>CSV
         </button>
       </header>
-      <div class="table-wrap"><table id="competitor-table" class="data-table"></table></div>
-    </section>
-
-    <!-- Recommendations -->
-    <section class="section-block">
-      <h2 class="section-title">Strategy recommendations</h2>
-      <div class="rec-grid" id="rec-grid"></div>
+      <ul class="quality-notes" id="quality-notes"></ul>
+      <div class="table-wrap"><table id="sources-table" class="data-table sources"></table></div>
     </section>
 
     <!-- Export -->
     <section class="export-bar no-print">
       <div>
         <h2>Export this report</h2>
-        <p>Download the tables as CSV, or save the full dashboard as PDF.</p>
+        <p>Download everything as CSV, or save the dashboard as PDF.</p>
       </div>
       <div class="export-actions">
         <button class="btn btn-outline-light" type="button" id="export-csv">Download CSV</button>
