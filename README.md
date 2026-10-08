@@ -8,7 +8,7 @@ Static HTML/CSS/JS dashboard for Exim Bank covering Facebook, Instagram, YouTube
 >
 > The **Simulated figures** switch in the header hides every simulated value. Open the page with `?view=public` to start in public-only mode (useful for stakeholder links). `null` in the data means "not available", never zero.
 >
-> The header logo is a placeholder wordmark. Swap in the official logo before sharing externally.
+> Logo: official reversed (white) lockup in `assets/exim-logo-white.png`, cropped from the Exim brand logo files.
 
 ## What's in it
 
@@ -34,6 +34,7 @@ index.html   Dashboard markup
 styles.css   Brand styling (Exim Blue #002B5C, Gold #F5A623, DM Sans) + print CSS
 app.js       Chart.js setup, data binding, CSV/print export
 data.json    Public observations, sources and labelled simulated fallbacks
+assets/      Official Exim logo (white) and favicon
 ```
 
 ## Run locally
