@@ -33,7 +33,7 @@ Static HTML/CSS/JS dashboard for Exim Bank covering Facebook, Instagram, YouTube
 index.html   Dashboard markup
 styles.css   Brand styling (Exim Blue #002B5C, Gold #F5A623, DM Sans) + print CSS
 app.js       Chart.js setup, data binding, CSV/print export
-data.json    All dummy metrics, the only file you need to edit to change numbers
+data.json    Public observations, sources and labelled simulated fallbacks
 ```
 
 ## Run locally
